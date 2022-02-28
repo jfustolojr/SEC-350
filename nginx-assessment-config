@@ -10,6 +10,7 @@ nano /etc/netplan/00-installer-config.yaml
     nameservers:
       addresses:
         - 172.16.50.2
-apt install nginx
 
+apt install nginx
 Edit /var/www/html/index.nginx-debian.html to create a custom website.
+systemctl restart nginx
