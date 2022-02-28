@@ -57,6 +57,18 @@ firewall {
             }
             protocol tcp
         }
+        rule 20 {
+            action accept
+            description "MGMT access to Jump"
+            destination {
+                address 172.16.50.4
+                port 22
+            }
+            protocol tcp
+            source {
+                address 172.16.200.11
+            }
+        }
     }
     name LAN-to-WAN {
         default-action drop
@@ -80,6 +92,15 @@ firewall {
             destination {
                 address 172.16.50.3
                 port 80
+            }
+            protocol tcp
+        }
+        rule 20 {
+            action accept
+            description "SSH to Jump"
+            destination {
+                address 172.16.50.4
+                port 22
             }
             protocol tcp
         }
@@ -115,6 +136,32 @@ interfaces {
     }
 }
 nat {
+    destination {
+        rule 10 {
+            description HTTP->WEB01
+            destination {
+                port 80
+            }
+            inbound-interface eth0
+            protocol tcp
+            translation {
+                address 172.16.50.3
+                port 80
+            }
+        }
+        rule 20 {
+            description SSH->JUMP
+            destination {
+                port 22
+            }
+            inbound-interface eth0
+            protocol tcp
+            translation {
+                address 172.16.50.4
+                port 22
+            }
+        }
+    }
     source {
         rule 10 {
             description "NAT FROM DMZ to WAN"
@@ -172,7 +219,6 @@ service {
         }
     }
     ssh {
-        listen-address 0.0.0.0
         listen-address 172.16.150.2
         loglevel verbose
     }
@@ -249,7 +295,6 @@ zone-policy {
         from LAN {
             firewall {
                 name LAN-to-DMZ
-            }
             }
         }
         from WAN {
