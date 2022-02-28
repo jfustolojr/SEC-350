@@ -1,0 +1,15 @@
+adduser joseph
+usermod -aG sudo joseph
+hostname nginx01-joseph
+nano /etc/netplan/00-installer-config.yaml
+  Change dhcp: true to dhcp: false
+  Add:
+    addresses:
+      - 172.16.50.5/29
+    gateway4: 172.16.50.2
+    nameservers:
+      addresses:
+        - 172.16.50.2
+apt install nginx
+
+Edit /var/www/html/index.nginx-debian.html to create a custom website.
